@@ -617,7 +617,7 @@ function lastCard(){
 function adminHtml(){
  var all=[];TABS.forEach(function(t,i){if(t&&i!=11)all.push(i)});
  CM.lastText=CM.last?"مدرسه: "+CM.last.name+"\nنام کاربری: "+CM.last.user+"\nرمز: "+CM.last.pass+"\nلینک ورود: "+CM.last.link:"";
- var h='<div style="grid-column:1/-1;max-width:940px;margin:0 auto;padding:12px;width:100%"><div class="card" style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:6px"><b>👑 پنل ادمین اصلی</b><span><button class="b" onclick="CMX.set()">تغییر نام کاربری/رمز ادمین</button><button class="b d" onclick="logout()">خروج</button></span></div>'+lastCard()+recCard();
+ var h='<button id="mb" class="np" aria-label="منو" onclick="tm()"><i></i><i></i><i></i></button><div id="nb" class="np" onclick="tm(false)"></div><nav id="nv"><button class="on" onclick="tm(false)">👑 پنل ادمین</button><button onclick="tm(false);CMX.cloud()" style="--c:#0284c7;--c2:#38bdf8">☁ حساب ابری</button><button onclick="tm(false);CMX.set()">🔐 تغییر نام کاربری/رمز</button><button onclick="tm(false);logout()" style="--c:#d6403a;--c2:#f87171">🚪 خروج</button></nav><div style="grid-column:1/-1;max-width:940px;margin:0 auto;padding:12px;width:100%"><div class="card" style="padding-right:64px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:6px"><b>👑 پنل ادمین اصلی</b><span><button class="b" onclick="CMX.set()">تغییر نام کاربری/رمز ادمین</button><button class="b d" onclick="logout()">خروج</button></span></div>'+lastCard()+recCard();
  h+='<div class="card"><h3>➕ مدرسهٔ جدید</h3><div class="row"><input id="an" placeholder="نام مدرسه"><input id="au" dir="ltr" placeholder="نام کاربری مدیر (انگلیسی)" autocapitalize="none"><input id="ap" dir="ltr" value="'+gen()+'"><button class="b" onclick="$(\'ap\').value=CMX.gen()">رمز تصادفی</button></div><div style="margin:6px 0"><b>بخش‌هایی که مدیر می‌تواند ببیند:</b><br>'+tabBoxes("nt",all)+'</div><button class="b" onclick="CMX.create()">ساخت مدرسه</button></div>';
  if(CM.msg)h+='<div class="card">'+esc(CM.msg)+"</div>";
  if(!CM.schools.length)h+='<div class="card mu">هنوز مدرسه‌ای تعریف نشده است.</div>';
@@ -692,7 +692,7 @@ function post(){
 }
 function cmCloud(open){
  var o=document.getElementById("cmcloud");
- if(open===false||CM.role!=="admin"||CM.view!=="app"){if(o)o.remove();return}
+ if(open===false||CM.role!=="admin"||(CM.view!=="app"&&CM.view!=="admin")){if(o)o.remove();return}
  if(open===null&&!o)return;
  if(!o){o=document.createElement("div");o.id="cmcloud";o.className="np";o.style.cssText="position:fixed;inset:0;z-index:9999;background:#0008;overflow:auto;padding:16px";o.onclick=function(ev){if(ev.target===o)cmCloud(false)};document.body.appendChild(o)}
  o.innerHTML='<div style="max-width:440px;margin:0 auto"><div style="text-align:left"><button class="b d" onclick="cmCloudClose()">✕ بستن</button></div>'+cloudCard()+'</div>'
@@ -709,10 +709,10 @@ R=function(){
   var r=_R.apply(this,arguments);try{post()}catch(x){console.error(x)}return r
  }
  e.removeAttribute("style");
- e.innerHTML=CM.view==="admin"?adminHtml():CM.view==="login"?loginHtml():'<div id="login" class="card"><p class="mu">در حال بارگذاری…</p></div>'
+ try{cmCloud(null)}catch(x){}e.innerHTML=CM.view==="admin"?adminHtml():CM.view==="login"?loginHtml():'<div id="login" class="card"><p class="mu">در حال بارگذاری…</p></div>'
 };
 window.addEventListener("hashchange",function(){if(slug()&&CM.view!=="login"&&(CM.role==="admin"||(lsg("cm_slug")||"")!==slug())){CM.view="login";CM.tok="";CM.role=""}if(CM.view==="login")R()});
-window.CMX={login:cmLogin,setup:cmSetup,create:admCreate,save:admSave,pass:admPass,del:admDel,set:admSet,open:function(id){cmLoad(id)},cp:cp,gen:gen,recStart:recStart,recBack:recBack,recCheck:recCheck,recSet:recSet,recMake:recMake};
+window.CMX={login:cmLogin,setup:cmSetup,create:admCreate,save:admSave,pass:admPass,del:admDel,set:admSet,open:function(id){cmLoad(id)},cp:cp,gen:gen,recStart:recStart,recBack:recBack,recCheck:recCheck,recSet:recSet,recMake:recMake,cloud:function(){cmCloud(true)}};
 window.$=$;
 R();cmBoot();
 })();
